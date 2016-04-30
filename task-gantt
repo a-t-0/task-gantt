@@ -30,6 +30,21 @@ GetOptions(
 my @filters = @ARGV;
 my @tasks   = get_tasks(@filters);
 
+foreach my $task (@tasks) {
+    $task->{duration} ||= $DEFAULT_DURATION;
+	my $due_date = Time::Piece->strptime($task->{due}, "%Y%m%dT%H%M%SZ");
+	$task->{start} = $due_date - 24*60*60 * $task->{duration};
+	$task->{end}   = $due_date;
+}
+
+sub sorter {
+    my $diff = ($a->{project}) cmp ($b->{project});
+    return $diff if $diff;
+    return ($a->{start}) <=> ($b->{start});
+}
+
+@tasks = sort sorter @tasks;
+
 my @task_hierarchy = resolve_dependencies(@tasks);
 
 my $gc = Project::Gantt->new(
@@ -47,21 +62,14 @@ for my $task (@task_hierarchy) {
 		warn "No duration specified. Assuming 1 day...\n";
 	}
 	
-	my $due_date = Time::Piece->strptime($task->{due}, "%Y%m%dT%H%M%SZ");
-	# The default duration also applies to durations set to 0
-	my $duration = $task->{duration} || $DEFAULT_DURATION;
-
-	my $start = $due_date - 24*60*60 * $duration;
-	my $end   = $due_date;
-
 	my $id = $task->{id} || $task->{uuid};
 
 	my $resource = $gc->addResource(name => $id);
 	$gc->addTask(
-		description => $task->{description},
+		description => "$task->{project}: $task->{description}",
 		resource    => $resource,
-		start       => $start->strftime('%Y-%m-%d 00:00:00'),
-		end         => $end->strftime('%Y-%m-%d 00:00:00')
+		start       => $task->{start}->strftime('%Y-%m-%d 00:00:00'),
+		end         => $task->{end}->strftime('%Y-%m-%d 00:00:00')
 	);
 }
 
@@ -87,4 +95,3 @@ sub resolve_dependencies {
 
 	return @tasks;
 }
-
