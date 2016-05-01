@@ -40,7 +40,9 @@ foreach my $task (@tasks) {
 sub sorter {
     my $diff = ($a->{project}) cmp ($b->{project});
     return $diff if $diff;
-    return ($a->{start}) <=> ($b->{start});
+    $diff = ($a->{start}) <=> ($b->{start});
+    return $diff if $diff;
+    return ($a->{end}) <=> ($b->{end});
 }
 
 @tasks = sort sorter @tasks;
