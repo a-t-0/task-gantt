@@ -31,9 +31,9 @@ my @filters = @ARGV;
 my @tasks   = get_tasks(@filters);
 
 foreach my $task (@tasks) {
-    $task->{duration} ||= $DEFAULT_DURATION;
+    my $duration = $task->{duration} || $DEFAULT_DURATION;
 	my $due_date = Time::Piece->strptime($task->{due}, "%Y%m%dT%H%M%SZ");
-	$task->{start} = $due_date - 24*60*60 * $task->{duration};
+	$task->{start} = $due_date - 24*60*60 * $duration;
 	$task->{end}   = $due_date;
 }
 
