@@ -22,6 +22,30 @@ Setup
 2.	Install `Project::Gantt` perl module
 
 	```
+	cd ~
+	mkdir gantt
+	sudo apt-update
+	sudo apt install php-imagick
+	sudo apt-get install libimage-magick-perl
+	sudo apt-get install perlmagick
+	sudo apt-get install imagemagick
+	sudo apt-get install libperl-dev
+	
+	wget http://www.imagemagick.org/download/ImageMagick-6.9.10-78.tar.bz2
+	tar xvfz ImageMagick-6.9.2-4.tar.gz
+	
+	wget http://www.imagemagick.org/download/ImageMagick-6.9.10-78.7z
+	apt install unzip
+	
+	apt install p7zip-full
+	7za x ImageMagick-6.9.10-78.7z
+	
+	cd ImageMagick-6.9.2-4/
+	./configure --with-perl
+	make
+	(*)
+	sudo make install
+	apt install cpanminus
 	cpanm Project::Gantt
 	```
 
